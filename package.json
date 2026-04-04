@@ -1,0 +1,32 @@
+{
+  "name": "recap",
+  "version": "1.0.0",
+  "description": "See exactly where you left off in any git repo",
+  "type": "module",
+  "bin": {
+    "recap": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "git",
+    "cli",
+    "devtools",
+    "productivity",
+    "git-summary",
+    "developer-experience"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AbhiVarde/recap"
+  },
+  "bugs": {
+    "url": "https://github.com/AbhiVarde/recap/issues"
+  },
+  "homepage": "https://github.com/AbhiVarde/recap#readme"
+}

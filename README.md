@@ -1,0 +1,113 @@
+# recap
+
+See exactly where you left off in any git repo.
+
+You open a project after days away. No idea what branch you were on, what you changed, whether it's clean. Instead of running `git log`, `git status`, and `git branch` separately — `recap` shows everything in one clean view.
+
+## Quick Start
+
+```bash
+npx recap
+```
+
+No install required. Run it inside any git repo.
+
+## Install Globally
+
+```bash
+npm install -g recap
+```
+
+## Usage
+
+```
+$ recap                     current repo
+$ recap [path]              specific repo
+$ recap --all [dir]         scan all repos in a directory
+$ recap --open              open repo in browser
+$ recap --watch             live-refresh every 3s
+$ recap --json              machine-readable output
+$ recap --help              show help
+```
+
+## What You See
+
+| Field            | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `branch`         | Current branch with ↑ahead / ↓behind upstream       |
+| `remote`         | Remote origin (auth tokens stripped automatically)  |
+| `last`           | Time since last commit, color-coded by age          |
+| `version`        | Nearest git tag                                     |
+| `recent commits` | Last 5 commits with conventional commit type colors |
+| `uncommitted`    | Clean or list of changed files with status          |
+| `stashes`        | Number of stashed changes                           |
+| `todos`          | Files containing TODO / FIXME / HACK                |
+| `languages`      | Codebase breakdown with proportional bars           |
+| `grade`          | A–F health score                                    |
+
+## Health Grade
+
+| Grade | Meaning                             |
+| ----- | ----------------------------------- |
+| `A`   | Clean, up-to-date                   |
+| `B`   | Good shape                          |
+| `C`   | Some uncommitted work or mild drift |
+| `D`   | Messy or significantly behind       |
+| `F`   | Needs immediate attention           |
+
+Grade is calculated from uncommitted files, commits behind upstream, and stash count.
+
+## Multi-Repo Scan
+
+```bash
+# See all repos under ~/Projects at once
+recap --all ~/Projects
+```
+
+Useful for a morning check across all your active projects.
+
+## JSON Output
+
+```bash
+recap --json
+```
+
+Pipes cleanly into `jq` or any script:
+
+```bash
+recap --json | jq '.grade'
+recap --json | jq '.languages[0].lang'
+```
+
+## Development
+
+```bash
+git clone https://github.com/AbhiVarde/recap
+cd recap
+npm install
+
+# Test on current repo
+node index.js
+
+# Test on a specific path
+node index.js /path/to/any/repo
+
+# Test multi-repo scan
+node index.js --all ~/Projects
+
+# Test JSON output
+node index.js --json
+```
+
+Only one dependency: [chalk](https://github.com/chalk/chalk) for terminal colors.
+
+## Contributing
+
+1. Fork and clone the repo
+2. Make changes in `index.js`
+3. Test with `node index.js` inside a git repo
+4. Open a pull request
+
+## License
+
+MIT © [Abhi Varde](https://github.com/AbhiVarde)
