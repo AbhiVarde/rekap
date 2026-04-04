@@ -1,10 +1,10 @@
 {
-  "name": "recap",
-  "version": "1.0.0",
+  "name": "klixo",
+  "version": "1.0.1",
   "description": "See exactly where you left off in any git repo",
   "type": "module",
   "bin": {
-    "recap": "./index.js"
+    "klixo": "./index.js"
   },
   "dependencies": {
     "chalk": "^5.3.0"
@@ -23,10 +23,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AbhiVarde/recap"
+    "url": "https://github.com/AbhiVarde/klixo"
   },
   "bugs": {
-    "url": "https://github.com/AbhiVarde/recap/issues"
+    "url": "https://github.com/AbhiVarde/klixo/issues"
   },
-  "homepage": "https://github.com/AbhiVarde/recap#readme"
+  "homepage": "https://github.com/AbhiVarde/klixo#readme"
 }
