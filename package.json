@@ -1,6 +1,6 @@
 {
-  "name": "rekap",
-  "version": "1.0.1",
+  "name": "@abhivarde/rekap",
+  "version": "1.0.0",
   "description": "See exactly where you left off in any git repo",
   "type": "module",
   "bin": {

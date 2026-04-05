@@ -7,7 +7,7 @@ You open a project after days away. No idea what branch you were on, what you ch
 ## Quick Start
 
 ```bash
-npx rekap
+npx @abhivarde/rekap
 ```
 
 No install required. Run it inside any git repo.
@@ -15,7 +15,7 @@ No install required. Run it inside any git repo.
 ## Install Globally
 
 ```bash
-npm install -g rekap
+npm install -g @abhivarde/rekap
 ```
 
 ## Usage

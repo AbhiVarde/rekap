@@ -206,8 +206,10 @@ function showAbout() {
   line("--json", "machine-readable output");
   line("--help", "show this screen");
   console.log("");
-  console.log(`  ${chalk.dim("try:")} npx rekap\n`);
-  console.log(chalk.dim("  Install globally: npm install -g rekap\n"));
+  console.log(`  ${chalk.dim("try:")} npx @abhivarde/rekap\n`);
+  console.log(
+    chalk.dim("  Install globally: npm install -g @abhivarde/rekap\n"),
+  );
 }
 
 function showRepo(cwd = process.cwd()) {
