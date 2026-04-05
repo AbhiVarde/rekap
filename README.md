@@ -1,13 +1,13 @@
-# klixo
+# rekap
 
 See exactly where you left off in any git repo.
 
-You open a project after days away. No idea what branch you were on, what you changed, whether it's clean. Instead of running `git log`, `git status`, and `git branch` separately — `klixo` shows everything in one clean view.
+You open a project after days away. No idea what branch you were on, what you changed, whether it's clean. Instead of running `git log`, `git status`, and `git branch` separately — `rekap` shows everything in one clean view.
 
 ## Quick Start
 
 ```bash
-npx klixo
+npx rekap
 ```
 
 No install required. Run it inside any git repo.
@@ -15,19 +15,19 @@ No install required. Run it inside any git repo.
 ## Install Globally
 
 ```bash
-npm install -g klixo
+npm install -g rekap
 ```
 
 ## Usage
 
 ```
-$ klixo                     current repo
-$ klixo [path]              specific repo
-$ klixo --all [dir]         scan all repos in a directory
-$ klixo --open              open repo in browser
-$ klixo --watch             live-refresh every 3s
-$ klixo --json              machine-readable output
-$ klixo --help              show help
+$ rekap                     current repo
+$ rekap [path]              specific repo
+$ rekap --all [dir]         scan all repos in a directory
+$ rekap --open              open repo in browser
+$ rekap --watch             live-refresh every 3s
+$ rekap --json              machine-readable output
+$ rekap --help              show help
 ```
 
 ## What You See
@@ -61,7 +61,7 @@ Grade is calculated from uncommitted files, commits behind upstream, and stash c
 
 ```bash
 # See all repos under ~/Projects at once
-klixo --all ~/Projects
+rekap --all ~/Projects
 ```
 
 Useful for a morning check across all your active projects.
@@ -69,21 +69,21 @@ Useful for a morning check across all your active projects.
 ## JSON Output
 
 ```bash
-klixo --json
+rekap --json
 ```
 
 Pipes cleanly into `jq` or any script:
 
 ```bash
-klixo --json | jq '.grade'
-klixo --json | jq '.languages[0].lang'
+rekap --json | jq '.grade'
+rekap --json | jq '.languages[0].lang'
 ```
 
 ## Development
 
 ```bash
-git clone https://github.com/AbhiVarde/klixo
-cd klixo
+git clone https://github.com/AbhiVarde/rekap
+cd rekap
 npm install
 
 # Test on current repo

@@ -11,12 +11,12 @@ const DIM = "\x1b[38;5;102m";
 const TEXT = "\x1b[38;5;145m";
 
 const LOGO_LINES = [
-  "  ██╗  ██╗██╗     ██╗██╗  ██╗ ██████╗ ",
-  "  ██║ ██╔╝██║     ██║╚██╗██╔╝██╔═══██╗",
-  "  █████╔╝ ██║     ██║ ╚███╔╝ ██║   ██║",
-  "  ██╔═██╗ ██║     ██║ ██╔██╗ ██║   ██║",
-  "  ██║  ██╗███████╗██║██╔╝ ██╗╚██████╔╝",
-  "  ╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝ ╚═════╝ ",
+  "  ██████╗ ███████╗██╗  ██╗ █████╗ ██████╗ ",
+  "  ██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔══██╗",
+  "  ██████╔╝█████╗  █████╔╝ ███████║██████╔╝",
+  "  ██╔══██╗██╔══╝  ██╔═██╗ ██╔══██║██╔═══╝ ",
+  "  ██║  ██║███████╗██║  ██╗██║  ██║██║     ",
+  "  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ",
 ];
 
 const GRAYS = [
@@ -196,7 +196,7 @@ function showAbout() {
   console.log(chalk.dim("  See exactly where you left off in any git repo\n"));
   const line = (cmd, desc) =>
     console.log(
-      `  ${chalk.dim("$")} klixo ${chalk.white(cmd.padEnd(20))} ${chalk.dim(desc)}`,
+      `  ${chalk.dim("$")} rekap ${chalk.white(cmd.padEnd(20))} ${chalk.dim(desc)}`,
     );
   line("", "summarize current repo");
   line("[path]", "summarize a specific repo");
@@ -206,8 +206,8 @@ function showAbout() {
   line("--json", "machine-readable output");
   line("--help", "show this screen");
   console.log("");
-  console.log(`  ${chalk.dim("try:")} npx klixo\n`);
-  console.log(chalk.dim("  Install globally: npm install -g klixo\n"));
+  console.log(`  ${chalk.dim("try:")} npx rekap\n`);
+  console.log(chalk.dim("  Install globally: npm install -g rekap\n"));
 }
 
 function showRepo(cwd = process.cwd()) {
