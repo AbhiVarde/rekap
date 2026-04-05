@@ -147,6 +147,13 @@ const EXT_LANG = {
   sol: "Solidity",
   ex: "Elixir",
   exs: "Elixir",
+  mts: "TypeScript",
+  cts: "TypeScript",
+  gql: "GraphQL",
+  graphql: "GraphQL",
+  prisma: "Prisma",
+  astro: "Astro",
+  sql: "SQL",
 };
 
 function getLangs(cwd) {
@@ -162,14 +169,17 @@ function getLangs(cwd) {
 
     const counts = {};
     for (const f of files) {
-      const lang = EXT_LANG[f.split(".").pop()?.toLowerCase()];
+      const ext = f.includes(".") ? f.split(".").pop()?.toLowerCase() : null;
+      const lang = ext ? EXT_LANG[ext] : null;
       if (lang) counts[lang] = (counts[lang] ?? 0) + 1;
     }
 
-    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const NOISE = new Set(["JSON", "YAML", "Markdown", "TOML"]);
+    const codeOnly = Object.entries(counts).filter(([l]) => !NOISE.has(l));
+    const total = codeOnly.reduce((a, [, n]) => a + n, 0);
     if (!total) return null;
 
-    return Object.entries(counts)
+    return codeOnly
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([lang, n]) => ({ lang, pct: Math.round((n / total) * 100) }));
