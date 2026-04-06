@@ -4,14 +4,6 @@ See exactly where you left off in any git repo.
 [![](https://img.shields.io/badge/npm-@abhivarde/rekap-000?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/package/@abhivarde/rekap)
 [![](https://img.shields.io/badge/npmx-@abhivarde/rekap-000?style=flat&logo=node.js&logoColor=white)](https://npmx.dev/package/@abhivarde/rekap)
 
-<p align="center">
-  <img
-    src="https://github.com/user-attachments/assets/8400d839-93f3-4b4e-986e-99b28630d5fb"
-    alt="rekap preview"
-    width="100%"
-  />
-</p>
-
 You open a project after days away. No idea what branch you were on, what you changed, whether it's clean. Instead of running `git log`, `git status`, and `git branch` separately — `rekap` shows everything in one clean view.
 
 ## Quick Start
