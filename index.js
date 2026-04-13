@@ -6,7 +6,6 @@ import { join, resolve, basename } from "path";
 
 const RESET = "\x1b[0m";
 const BOLD = "\x1b[1m";
-
 const DIM = "\x1b[38;5;102m";
 const TEXT = "\x1b[38;5;145m";
 
@@ -33,13 +32,18 @@ const LOGO = LOGO_LINES.map((line, i) => `${GRAYS[i]}${line}${RESET}`).join(
 );
 
 const args = process.argv.slice(2);
+const isOrg = args[0] === "org";
+const orgName = isOrg ? args[1] : null;
+const sortIdx = args.indexOf("--sort");
+const sortBy = sortIdx !== -1 ? (args[sortIdx + 1] ?? "updated") : "updated";
+
 const FLAGS = {
   all: args.includes("--all"),
   open: args.includes("--open"),
   watch: args.includes("--watch"),
   json: args.includes("--json"),
   help: args.includes("--help") || args.includes("-h"),
-  path: args.find((a) => !a.startsWith("-")) ?? ".",
+  path: isOrg ? "." : (args.find((a) => !a.startsWith("-")) ?? "."),
 };
 
 function git(cmd, cwd = process.cwd()) {
@@ -84,6 +88,25 @@ function timeLabel(t) {
   return `${DIM}${t}${RESET}`;
 }
 
+function timeAgo(iso) {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d ago`;
+  const mo = Math.floor(d / 30);
+  if (mo < 12) return `${mo}mo ago`;
+  return `${Math.floor(mo / 12)}y ago`;
+}
+
+function fmtNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(n);
+}
+
 const CC = {
   feat: "feat",
   fix: "fix",
@@ -108,6 +131,8 @@ function colorCommit(msg) {
 const EXT_LANG = {
   ts: "TypeScript",
   tsx: "TypeScript",
+  mts: "TypeScript",
+  cts: "TypeScript",
   js: "JavaScript",
   jsx: "JavaScript",
   mjs: "JavaScript",
@@ -147,8 +172,6 @@ const EXT_LANG = {
   sol: "Solidity",
   ex: "Elixir",
   exs: "Elixir",
-  mts: "TypeScript",
-  cts: "TypeScript",
   gql: "GraphQL",
   graphql: "GraphQL",
   prisma: "Prisma",
@@ -206,10 +229,13 @@ function showAbout() {
   console.log(chalk.dim("  See exactly where you left off in any git repo\n"));
   const line = (cmd, desc) =>
     console.log(
-      `  ${chalk.dim("$")} rekap ${chalk.white(cmd.padEnd(20))} ${chalk.dim(desc)}`,
+      `  ${chalk.dim("$")} rekap ${chalk.white(cmd.padEnd(28))} ${chalk.dim(desc)}`,
     );
-  line("", "summarize current repo");
-  line("[path]", "summarize a specific repo");
+  line("", "current repo");
+  line("[path]", "specific repo");
+  line("org <n>", "top 8 recently updated public repos");
+  line("org <n> --sort stars", "top 8 by stars");
+  line("org <n> --sort forks", "top 8 by forks");
   line("--all [dir]", "scan all repos in a directory");
   line("--open", "open current branch in browser");
   line("--watch", "live-refresh every 3s");
@@ -299,7 +325,6 @@ function showRepo(cwd = process.cwd()) {
     );
 
   row("last", timeLabel(lastDate));
-
   if (tag) row("version", chalk.dim(tag));
 
   console.log(`\n  ${chalk.white("recent commits")}`);
@@ -326,7 +351,6 @@ function showRepo(cwd = process.cwd()) {
     for (const l of changed.slice(0, 6)) {
       const m = l.match(/^(.{2})\s(.+)$/);
       if (!m) continue;
-
       const sc =
         m[1].trim() === "??"
           ? chalk.dim("??")
@@ -337,10 +361,8 @@ function showRepo(cwd = process.cwd()) {
               : m[1].includes("D")
                 ? chalk.dim(" D")
                 : chalk.dim(m[1].padStart(2));
-
       console.log(`  ${sc}  ${chalk.dim(m[2])}`);
     }
-
     if (changed.length > 6)
       console.log(chalk.dim(`     …and ${changed.length - 6} more`));
   }
@@ -387,7 +409,6 @@ function showAll(dir) {
       `\n  scanning ${dir} — ${repos.length} repo${repos.length > 1 ? "s" : ""}\n`,
     ),
   );
-
   for (const r of repos) showRepo(join(dir, r));
 }
 
@@ -400,12 +421,10 @@ function openRepo(cwd) {
   }
 
   let url = sanitize(raw);
-
   if (!url.startsWith("http"))
     url = url.replace(/^git@([^:]+):/, "https://$1/");
 
   const branch = git("branch --show-current", cwd);
-
   if (branch && branch !== "main" && branch !== "master")
     url += `/tree/${branch}`;
 
@@ -433,7 +452,6 @@ function watchRepo(cwd) {
     try {
       clear();
     } catch {}
-
     showRepo(cwd);
     console.log(chalk.dim("  watching… ctrl+c to stop\n"));
   };
@@ -442,7 +460,103 @@ function watchRepo(cwd) {
   setInterval(run, 3000);
 }
 
-function main() {
+async function showOrg(org, sort) {
+  if (!org) {
+    console.log(chalk.dim("\n  usage: rekap org <n>\n"));
+    process.exit(1);
+  }
+
+  const validSorts = ["updated", "stars", "forks"];
+  if (!validSorts.includes(sort)) {
+    console.log(
+      chalk.dim(`\n  unknown sort "${sort}"  —  try: updated, stars, forks\n`),
+    );
+    process.exit(1);
+  }
+
+  let repos;
+  try {
+    const res = await fetch(
+      `https://api.github.com/orgs/${org}/repos?per_page=100&type=public&sort=updated`,
+      {
+        headers: {
+          "User-Agent": "rekap-cli",
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+
+    if (res.status === 404) {
+      console.log(chalk.dim(`\n  org not found: ${org}\n`));
+      process.exit(1);
+    }
+    if (res.status === 403 || res.status === 429) {
+      console.log(chalk.dim("\n  github rate limit — try again in a minute\n"));
+      process.exit(1);
+    }
+    if (!res.ok) {
+      console.log(chalk.dim(`\n  github api error: ${res.status}\n`));
+      process.exit(1);
+    }
+
+    repos = await res.json();
+  } catch (e) {
+    const isOffline = e?.cause?.code === "ENOTFOUND" || e?.code === "ENOTFOUND";
+    console.log(
+      chalk.dim(
+        isOffline ? "\n  no internet connection\n" : "\n  network error\n",
+      ),
+    );
+    process.exit(1);
+  }
+
+  if (!Array.isArray(repos) || !repos.length) {
+    console.log(chalk.dim(`\n  ${org} has no public repos\n`));
+    return;
+  }
+
+  const sorted = [...repos].sort((a, b) => {
+    if (sort === "stars") return b.stargazers_count - a.stargazers_count;
+    if (sort === "forks") return b.forks_count - a.forks_count;
+    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  });
+
+  const top = sorted.slice(0, 8);
+  const sortLabel =
+    sort === "stars"
+      ? "most starred"
+      : sort === "forks"
+        ? "most forked"
+        : "recently updated";
+
+  console.log(`\n${LOGO}\n`);
+  console.log(
+    `  ${TEXT}${BOLD}${org}${RESET}  ${DIM}•  ${repos.length} public repos  •  ${sortLabel}${RESET}\n`,
+  );
+
+  for (let i = 0; i < top.length; i++) {
+    const r = top[i];
+    const num = chalk.dim(String(i + 1).padStart(2));
+    const rawName = r.name.length > 26 ? r.name.slice(0, 25) + "…" : r.name;
+    const name = chalk.white(rawName.padEnd(27));
+    const stars = chalk.dim(("★ " + fmtNum(r.stargazers_count)).padEnd(9));
+    const age = chalk.dim(timeAgo(r.updated_at).padEnd(11));
+    const lang = chalk.dim(r.language ?? "—");
+
+    if (sort === "forks") {
+      const forks = chalk.dim(("⑂ " + fmtNum(r.forks_count)).padEnd(9));
+      console.log(`  ${num}  ${name}  ${forks}${stars}  ${age}  ${lang}`);
+    } else {
+      console.log(`  ${num}  ${name}  ${stars}  ${age}  ${lang}`);
+    }
+  }
+
+  console.log(
+    `\n  ${chalk.dim(`showing 8 of ${repos.length}  •  --sort updated  --sort stars  --sort forks`)}\n`,
+  );
+}
+
+async function main() {
   const cwd = resolve(FLAGS.path);
 
   if (FLAGS.help) {
@@ -451,6 +565,7 @@ function main() {
     return;
   }
 
+  if (isOrg) return await showOrg(orgName, sortBy);
   if (FLAGS.open) return openRepo(cwd);
   if (FLAGS.watch) return watchRepo(cwd);
   if (FLAGS.all) return showAll(cwd);

@@ -1,6 +1,9 @@
 # rekap
 
-See exactly where you left off in any git repo.
+See exactly where you left off in any git repo — and what's active across any GitHub org.
+
+[![](https://img.shields.io/badge/npm-@abhivarde/rekap-000?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/package/@abhivarde/rekap)
+[![](https://img.shields.io/badge/npmx-@abhivarde/rekap-000?style=flat&logo=node.js&logoColor=white)](https://npmx.dev/package/@abhivarde/rekap)
 
 You open a project after days away. No idea what branch you were on, what you changed, whether it's clean. Instead of running `git log`, `git status`, and `git branch` separately — `rekap` shows everything in one clean view.
 
@@ -20,17 +23,22 @@ npm install -g @abhivarde/rekap
 
 ## Usage
 
-```
-$ rekap                     current repo
-$ rekap [path]              specific repo
-$ rekap --all [dir]         scan all repos in a directory
-$ rekap --open              open repo in browser
-$ rekap --watch             live-refresh every 3s
-$ rekap --json              machine-readable output
-$ rekap --help              show help
+```bash
+$ rekap                           current repo
+$ rekap [path]                    specific repo
+$ rekap org <name>                top 8 recently updated public repos
+$ rekap org <name> --sort stars   top 8 by stars
+$ rekap org <name> --sort forks   top 8 by forks
+$ rekap --all [dir]               scan all repos in a directory
+$ rekap --open                    open current branch in browser
+$ rekap --watch                   live-refresh every 3s
+$ rekap --json                    machine-readable output
+$ rekap --help                    show help
 ```
 
-## What You See
+## Repo Summary
+
+What you see when you run `rekap` inside a git repo:
 
 | Field            | Description                                         |
 | ---------------- | --------------------------------------------------- |
@@ -41,7 +49,6 @@ $ rekap --help              show help
 | `recent commits` | Last 5 commits with conventional commit type colors |
 | `uncommitted`    | Clean or list of changed files with status          |
 | `stashes`        | Number of stashed changes                           |
-| `todos`          | Files containing TODO / FIXME / HACK                |
 | `languages`      | Codebase breakdown with proportional bars           |
 | `grade`          | A–F health score                                    |
 
@@ -56,6 +63,18 @@ $ rekap --help              show help
 | `F`   | Needs immediate attention           |
 
 Grade is calculated from uncommitted files, commits behind upstream, and stash count.
+
+## Org Intelligence
+
+Scan any public GitHub org instantly. No token required.
+
+```bash
+rekap org vercel-labs
+rekap org appwrite --sort stars
+rekap org AbhiVarde --sort forks
+```
+
+Shows the top 8 repos sorted by your choice — recently updated (default), most starred, or most forked. Useful for tracking what an org is actively shipping, finding repos to contribute to, and discovering what's worth forking.
 
 ## Multi-Repo Scan
 
@@ -89,8 +108,9 @@ npm install
 # Test on current repo
 node index.js
 
-# Test on a specific path
-node index.js /path/to/any/repo
+# Test org feature
+node index.js org vercel-labs
+node index.js org appwrite --sort stars
 
 # Test multi-repo scan
 node index.js --all ~/Projects
