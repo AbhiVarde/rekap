@@ -1,6 +1,6 @@
 # rekap
 
-See exactly where you left off in any git repo — and what's active across any GitHub org.
+See exactly where you left off in any git repo and what's active across any GitHub org.
 
 [![](https://img.shields.io/badge/npm-@abhivarde/rekap-000?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/package/@abhivarde/rekap)
 [![](https://img.shields.io/badge/npmx-@abhivarde/rekap-000?style=flat&logo=node.js&logoColor=white)](https://npmx.dev/package/@abhivarde/rekap)
